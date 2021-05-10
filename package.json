@@ -1,0 +1,21 @@
+{
+  "name": "soku",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@pancakeswap/pancake-swap-lib": "^0.0.4",
+    "@truffle/hdwallet-provider": "^1.2.2",
+    "chai": "^4.3.4",
+    "dotenv": "^8.2.0",
+    "truffle-plugin-verify": "^0.5.7"
+  }
+}
