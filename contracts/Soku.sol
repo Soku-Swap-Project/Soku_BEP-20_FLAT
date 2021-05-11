@@ -28,77 +28,6 @@ contract Context {
     }
 }
 
-// 
-/**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
- */
-contract Ownable is Context {
-    address private _owner;
-
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor() internal {
-        address msgSender = _msgSender();
-        _owner = msgSender;
-        emit OwnershipTransferred(address(0), msgSender);
-    }
-
-    /**
-     * @dev Returns the address of the current owner.
-     */
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(_owner == _msgSender(), 'Ownable: caller is not the owner');
-        _;
-    }
-
-    /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions anymore. Can only be called by the current owner.
-     *
-     * NOTE: Renouncing ownership will leave the contract without an owner,
-     * thereby removing any functionality that is only available to the owner.
-     */
-    function renounceOwnership() public onlyOwner {
-        emit OwnershipTransferred(_owner, address(0));
-        _owner = address(0);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     */
-    function transferOwnership(address newOwner) public onlyOwner {
-        _transferOwnership(newOwner);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     */
-    function _transferOwnership(address newOwner) internal {
-        require(newOwner != address(0), 'Ownable: new owner is the zero address');
-        emit OwnershipTransferred(_owner, newOwner);
-        _owner = newOwner;
-    }
-}
 
 // 
 interface IBEP20 {
@@ -121,11 +50,6 @@ interface IBEP20 {
      * @dev Returns the token name.
      */
     function name() external view returns (string memory);
-
-    /**
-     * @dev Returns the bep token owner.
-     */
-    function getOwner() external view returns (address);
 
     /**
      * @dev Returns the amount of tokens owned by `account`.
@@ -567,7 +491,7 @@ library Address {
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IBEP20-approve}.
  */
-contract BEP20 is Context, IBEP20, Ownable {
+contract BEP20 is Context, IBEP20 {
     using SafeMath for uint256;
     using Address for address;
 
@@ -594,13 +518,6 @@ contract BEP20 is Context, IBEP20, Ownable {
         _name = name;
         _symbol = symbol;
         _decimals = 18;
-    }
-
-    /**
-     * @dev Returns the bep token owner.
-     */
-    function getOwner() external override view returns (address) {
-        return owner();
     }
 
     /**
@@ -737,19 +654,6 @@ contract BEP20 is Context, IBEP20, Ownable {
     }
 
     /**
-     * @dev Creates `amount` tokens and assigns them to `msg.sender`, increasing
-     * the total supply.
-     *
-     * Requirements
-     *
-     * - `msg.sender` must be the token owner
-     */
-    function mint(uint256 amount) public onlyOwner returns (bool) {
-        _mint(_msgSender(), amount);
-        return true;
-    }
-
-    /**
      * @dev Moves tokens `amount` from `sender` to `recipient`.
      *
      * This is internal function is equivalent to {transfer}, and can be used to
@@ -855,10 +759,11 @@ contract BEP20 is Context, IBEP20, Ownable {
 
 // SOKU Token with Governance.
 contract Soku is BEP20('Soku', 'SOKU') {
-    /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
-    function mint(address _to, uint256 _amount) public onlyOwner {
-        _mint(_to, _amount);
-        _moveDelegates(address(0), _delegates[_to], _amount);
+
+    constructor() public {
+        uint256 totalSupply = 222222222*(10**18);
+        _mint(msg.sender, totalSupply);
+        _moveDelegates(address(0), msg.sender, totalSupply);
     }
 
     // Copied and modified from YAM code:
@@ -1091,3 +996,4 @@ contract Soku is BEP20('Soku', 'SOKU') {
         return chainId;
     }
 }
+
